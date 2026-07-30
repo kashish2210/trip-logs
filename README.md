@@ -203,6 +203,13 @@ contiguous from 00:00 to 24:00, and daily mileage sums to the route total.
 Network calls are stubbed, so the suite runs offline and deterministically.
 
 ---
+## snaps:
+<img width="1137" height="841" alt="image" src="https://github.com/user-attachments/assets/87ae0b1a-84e8-4451-b04f-25bf9d78259d" />
+<img width="1310" height="796" alt="image" src="https://github.com/user-attachments/assets/8ae0f997-7912-46bc-97cf-92b35170e96f" />
+<img width="1302" height="642" alt="image" src="https://github.com/user-attachments/assets/54d2cdf6-d1a8-47fb-9f22-bc92f9eeee95" />
+<img width="1291" height="736" alt="image" src="https://github.com/user-attachments/assets/6f71dd73-53cb-459a-a45b-799fb4d9814e" />
+<img width="1417" height="875" alt="image" src="https://github.com/user-attachments/assets/b16d30b5-9d08-4b24-a7b6-368cbb1ed6ab" />
+<img width="331" height="837" alt="image" src="https://github.com/user-attachments/assets/401fa4fb-f869-42f6-96c5-e9608c9dff2c" />
 
 ## Notes and limits
 
