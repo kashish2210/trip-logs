@@ -11,6 +11,8 @@ Django + DRF on the back, React + TypeScript on the front. No API keys needed.
 ## Quick start
 
 Two terminals. The backend runs in the `venv` conda environment.
+Deployed here: [CLICK HERE](https://trip-logs.onrender.com/)
+Demonstration Video: [CLICK HERE](https://youtu.be/maIgohcmDHY)
 
 **Terminal 1 — backend**
 
