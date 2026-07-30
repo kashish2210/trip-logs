@@ -2,7 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  // In production builds, Vite asset paths are prefixed with /static/ so
+  // they land exactly where WhiteNoise already serves Django static files.
+  // In development mode, base stays at / so the Vite dev proxy still works.
+  base: mode === "production" ? "/static/" : "/",
   plugins: [react(), tailwindcss()],
   server: {
     port: 5173,
@@ -32,4 +36,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

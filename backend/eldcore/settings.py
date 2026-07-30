@@ -83,17 +83,19 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        # CompressedStaticFilesStorage: gzip/brotli compress, but no manifest
+        # post-processing. Safe with Vite-built files whose filenames are
+        # already content-hashed by the bundler.
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"
     },
 }
 
-# Serve the compiled React/Vite bundle at the SITE ROOT (/, /assets/*, etc.)
-# WhiteNoise intercepts these BEFORE Django routing, so Vite's default
-# asset paths (/assets/foo.js) resolve correctly without any base-URL changes.
-# Django's own /static/ still serves admin static files as normal.
+# Include the compiled React/Vite bundle so collectstatic copies it into
+# staticfiles/ and WhiteNoise serves it at /static/assets/*, /static/index.html etc.
+# Vite is built with base='/static/' so all <script src> references match.
 FRONTEND_DIST = BASE_DIR / "frontend_dist"
 if FRONTEND_DIST.exists():
-    WHITENOISE_ROOT = str(FRONTEND_DIST)
+    STATICFILES_DIRS = [FRONTEND_DIST]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
