@@ -1,0 +1,42 @@
+###############################################################################
+# render.yaml — Render Blueprint for trip-logs
+# Deploys a single Docker-based web service that serves both the Django
+# REST API and the compiled React/Vite frontend.
+###############################################################################
+
+services:
+  - type: web
+    name: trip-logs
+    runtime: docker
+    branch: deploy
+    region: oregon
+    dockerfilePath: ./Dockerfile        # relative to repo root
+    dockerContext: .                    # build context = repo root
+
+    # ── Health-check ───────────────────────────────────────────────────────
+    healthCheckPath: /api/health/
+
+    # ── Environment variables ──────────────────────────────────────────────
+    envVars:
+      # Required — set a strong random value in Render dashboard
+      - key: DJANGO_SECRET_KEY
+        generateValue: true             # Render auto-generates a secure value
+
+      # Set to 0 in production
+      - key: DJANGO_DEBUG
+        value: "0"
+
+      # Your Render service URL (e.g. https://trip-logs.onrender.com)
+      # Render injects RENDER_EXTERNAL_URL automatically; we also set ALLOWED_HOSTS
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "trip-logs.onrender.com"   # <-- change if you use a custom domain
+
+      # CSRF trusted origins — required when DEBUG=0
+      - key: DJANGO_CSRF_ORIGINS
+        value: "https://trip-logs.onrender.com"   # <-- same as above
+
+      # Optional tuning (defaults are fine for free-tier)
+      - key: GEO_HTTP_TIMEOUT
+        value: "25"
+      - key: GEO_ALLOW_FALLBACK
+        value: "1"

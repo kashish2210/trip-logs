@@ -77,8 +77,15 @@ USE_I18N = True
 # planner works in naive local datetimes end to end. See services/hos.py.
 USE_TZ = False
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# The compiled React/Vite bundle is copied here by the Dockerfile.
+# Django's collectstatic will pick it up and WhiteNoise will serve it.
+FRONTEND_DIST = BASE_DIR / "frontend_dist"
+if FRONTEND_DIST.exists():
+    STATICFILES_DIRS = [FRONTEND_DIST]
+
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {
