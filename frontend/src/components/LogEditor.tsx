@@ -10,6 +10,7 @@ import {
   type ViewWindow,
   clampView,
   clockLabel,
+  edgeLabel,
   panBy,
   tickPlan,
   zoomAround,
@@ -91,8 +92,12 @@ export default function LogEditor({ days, cycleUsedStart, onExit }: Props) {
   }, [baseline]);
 
   const day = days[Math.min(activeIndex, days.length - 1)];
-  const changes = state.changes[day.date] ?? [];
-  const spans = useMemo(() => toSpans(changes), [changes]);
+  // Memoised so the identity is stable between renders; the `?? []` fallback
+  // would otherwise mint a new array every time and re-run everything below.
+  const changes = useMemo(
+    () => state.changes[day.date] ?? [],
+    [state.changes, day.date]
+  );
   const totals = useMemo(() => totalsOf(changes), [changes]);
 
   const mergedDay = useMemo(
@@ -368,7 +373,7 @@ function Toolbar({
           −
         </IconButton>
         <span className="num min-w-24 text-center text-[0.72rem] text-muted">
-          {clockLabel(view.start)}–{clockLabel(view.end)}
+          {edgeLabel(view.start)}–{edgeLabel(view.end)}
         </span>
         <IconButton label="Zoom in" onClick={() => onView(zoomAround(view, 1 / 1.5, centre))}>
           +

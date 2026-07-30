@@ -140,6 +140,16 @@ export function clockLabel(minute: number): string {
   ).padStart(2, "0")}`;
 }
 
+/**
+ * Clock label for a window edge, where the end of the day reads 24:00.
+ *
+ * `clockLabel` wraps minute 1440 back to 00:00, which is right on the grid
+ * axis but makes a full-day range read "00:00-00:00".
+ */
+export function edgeLabel(minute: number): string {
+  return Math.round(minute) >= MINUTES_PER_DAY ? "24:00" : clockLabel(minute);
+}
+
 /** Tick positions of `step` minutes covering the visible window. */
 export function ticksIn(view: ViewWindow, step: number): number[] {
   const first = Math.ceil(view.start / step) * step;

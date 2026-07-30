@@ -28,10 +28,15 @@ export default function LogSheets({ plan }: { plan: TripPlan }) {
         hostRef.current?.querySelectorAll("svg") ?? []
       ) as SVGSVGElement[];
       if (svgs.length === 0) throw new Error("Nothing to export yet.");
+      // The editor shows a single sheet, so the on-screen SVGs are the source
+      // of truth for what gets exported rather than the `visible` list.
       for (let i = 0; i < svgs.length; i += 1) {
-        const day = visible[i];
+        const label =
+          svgs[i].getAttribute("aria-label")?.replace(/^Driver's daily log for /, "") ??
+          `sheet-${i + 1}`;
+        const slug = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
         const blob = await svgToPngBlob(svgs[i]);
-        downloadBlob(blob, `eld-log-day-${day.day_number}-${day.date}.png`);
+        downloadBlob(blob, `eld-log-${slug || i + 1}.png`);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Export failed.");
@@ -62,30 +67,34 @@ export default function LogSheets({ plan }: { plan: TripPlan }) {
           >
             ✎ {editing ? "Editing" : "Edit logs"}
           </button>
-          <div className="flex overflow-hidden rounded-[var(--radius-sm)] border border-line">
-            {(["stack", "single"] as View[]).map((mode) => (
+          {!editing && (
+            <>
+              <div className="flex overflow-hidden rounded-[var(--radius-sm)] border border-line">
+                {(["stack", "single"] as View[]).map((mode) => (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setView(mode)}
+                    className={`px-3 py-2 text-[0.78rem] font-semibold transition-colors ${
+                      view === mode
+                        ? "bg-accent-soft text-accent"
+                        : "bg-surface-2 text-muted hover:text-ink"
+                    }`}
+                  >
+                    {mode === "stack" ? "All days" : "One day"}
+                  </button>
+                ))}
+              </div>
               <button
-                key={mode}
                 type="button"
-                onClick={() => setView(mode)}
-                className={`px-3 py-2 text-[0.78rem] font-semibold transition-colors ${
-                  view === mode
-                    ? "bg-accent-soft text-accent"
-                    : "bg-surface-2 text-muted hover:text-ink"
-                }`}
+                onClick={() => setReplayKey((k) => k + 1)}
+                className="btn btn-ghost !py-2"
+                title="Replay the drawing animation"
               >
-                {mode === "stack" ? "All days" : "One day"}
+                ↻ Replay
               </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => setReplayKey((k) => k + 1)}
-            className="btn btn-ghost !py-2"
-            title="Replay the drawing animation"
-          >
-            ↻ Replay
-          </button>
+            </>
+          )}
           <button
             type="button"
             onClick={exportPng}

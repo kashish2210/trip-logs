@@ -307,7 +307,13 @@ function usePointerTools(
     const p = toSheetPoint(svg, event.clientX, event.clientY);
     if (!insideGrid(p)) return;
 
-    svg.setPointerCapture(event.pointerId);
+    // Capture keeps a drag alive if the pointer leaves the sheet. It throws
+    // for a pointer id the browser doesn't know about, which is never fatal.
+    try {
+      svg.setPointerCapture(event.pointerId);
+    } catch {
+      /* continue without capture */
+    }
     const index = hitHandle(p);
     if (index !== null) {
       gesture.current = { type: "point", index, moved: false };
@@ -377,8 +383,12 @@ function usePointerTools(
     gesture.current = { type: "idle" };
     setDraggingIndex(null);
     setCursor(undefined);
-    if (svg?.hasPointerCapture(event.pointerId)) {
-      svg.releasePointerCapture(event.pointerId);
+    try {
+      if (svg?.hasPointerCapture(event.pointerId)) {
+        svg.releasePointerCapture(event.pointerId);
+      }
+    } catch {
+      /* nothing to release */
     }
 
     if (current.type === "point") {
